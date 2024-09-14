@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="email">Email</string>
+    <string name="enter_email">Enter email address</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show Password</string>
+    <string name="password">Password</string>
+    <string name="enter_password">Enter password</string>
+    <string name="register_title">Create an Account :)</string>
+    <string name="enter_first_name">Enter first name</string>
+    <string name="enter_last_name">Enter last name</string>
+    <string name="enter_username">Enter username</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="already_have_an_account">Already have an account? Sign in</string>
+    <string name="register">Register</string>
+    <string name="unknown_error">Unknown error, please try again</string>
+    <string name="bad_request">Please make your details meet the requirements</string>
+    <string name="connection_error">Connection Error, please try again</string>
+    <string name="conflict_error">A user with this email already exists</string>
+</resources>

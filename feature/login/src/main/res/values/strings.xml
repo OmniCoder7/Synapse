@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_login_enter_your_email">Please enter your email address</string>
+    <string name="feature_login_enter_your_password">Please enter your password</string>
+    <string name="feature_login_forgot_password">Forgot your password?</string>
+    <string name="feature_login_login">Sign In</string>
+    <string name="feature_login_show_password">Display password</string>
+    <string name="feature_login_create_account">Don\'t have an account? Create one now</string>
+    <string name="feature_login_login_title">Welcome Back!</string>
+    <string name="feature_login_login_error">The password is incorrect</string>
+    <string name="feature_login_connection_error">Please make sure you have stable internet connection</string>
+    <string name="feature_login_unknown_error">Unknown error, please try again</string>
+</resources>

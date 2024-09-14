@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="password_blank">Password cannot be blank</string>
+    <string name="too_short">Password is too short</string>
+    <string name="no_lowercase">Password must contain at least one lowercase character</string>
+    <string name="no_uppercase">Password must contain at least one uppercase character</string>
+    <string name="no_digit">Password must contain at least one digit</string>
+    <string name="no_special_char">Password must contain at least one special character</string>
+    <string name="invalid_format">Password format is invalid</string>
+    <string name="email_blank">Email address cannot be blank</string>
+    <string name="no_at_symbol">Email address must contain the @ symbol</string>
+    <string name="email_too_long">Email address is too long</string>
+    <string name="at_start_or_end">The @ symbol cannot be at the start or end of the email address</string>
+    <string name="consecutive_periods">Email address cannot contain consecutive periods</string>
+    <string name="contains_spaces">Email address cannot contain spaces</string>
+    <string name="multiple_at_symbols">Email address cannot contain multiple @ symbols</string>
+    <string name="local_part_too_long">Local part of the email address is too long</string>
+    <string name="domain_part_too_long">Domain part of the email address is too long</string>
+    <string name="illegal_characters">Email address contains illegal characters</string>
+    <string name="password_mismatch">Passwords do not match</string>
+</resources>
