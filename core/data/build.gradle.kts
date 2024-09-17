@@ -17,4 +17,5 @@ dependencies {
 
     implementation(project(":core:network"))
     implementation(project(":core:domain"))
+    implementation (libs.jbcrypt)
 }

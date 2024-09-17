@@ -1,5 +1,7 @@
 package com.proton.network.api
 
+import android.util.Log
+import android.util.Log.e
 import com.proton.network.exception.NetworkException
 import com.proton.network.exception.mapKtorExceptionToNetworkException
 import com.proton.network.models.request.LoginRequest
@@ -10,21 +12,28 @@ import com.proton.network.utils.ApiEndpoints
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
 class UserApi(private val client: HttpClient) {
 
     suspend fun login(email: String, password: String): LoginResponse {
-        return try {
-            client.post(ApiEndpoints.LOGIN) {
-                setBody(LoginRequest(email, password))
-                contentType(ContentType.Application.Json)
-            }.body()
-        } catch (e: Exception) {
-            throw mapKtorExceptionToNetworkException(e)
+        val res = client.post(ApiEndpoints.LOGIN) {
+            setBody(LoginRequest(email, password))
+            contentType(ContentType.Application.Json)
+        }
+        return when (res.status) {
+            HttpStatusCode.Unauthorized -> throw NetworkException.UnauthorizedException()
+            HttpStatusCode.OK -> res.body()
+            else -> {
+                e("NetworkError", res.status.toString())
+                throw NetworkException.UnknownException()
+            }
         }
     }
 
@@ -39,7 +48,7 @@ class UserApi(private val client: HttpClient) {
         number: Long,
         address: String,
     ): LoginResponse {
-        return client.post(ApiEndpoints.REGISTER) {
+        val res = client.post(ApiEndpoints.REGISTER) {
             setBody(
                 RegisterRequest(
                     firstName = firstName,
@@ -54,35 +63,39 @@ class UserApi(private val client: HttpClient) {
                 )
             )
             contentType(ContentType.Application.Json)
-        }.body()
-    }
-
-    suspend fun authenticate(accessToken: String): AuthResponse {
-        return try {
-            client.post(ApiEndpoints.CURRENT_USER_TOKEN) {
-                setBody(accessToken)
-            }.body()
-        } catch (e: NetworkException) {
-            throw mapKtorExceptionToNetworkException(e)
+        }
+        return when (res.status) {
+            HttpStatusCode.BadRequest -> throw NetworkException.BadRequestException()
+            HttpStatusCode.NotFound -> throw NetworkException.NotFoundException()
+            HttpStatusCode.Unauthorized -> throw NetworkException.UnauthorizedException()
+            HttpStatusCode.OK -> res.body()
+            else -> {
+                e("NetworkError", res.status.toString())
+                throw NetworkException.UnknownException()
+            }
         }
     }
 
-    suspend fun authenticate(id: Long): AuthResponse {
-        return try {
-            client.post(ApiEndpoints.CURRENT_USER_TOKEN) {
-                setBody(id)
-                contentType(ContentType.Text.Plain)
-            }.body()
-        } catch (e: NetworkException) {
-            throw mapKtorExceptionToNetworkException(e)
+    suspend fun authenticate(accessToken: String): AuthResponse {
+        val res = client.get(ApiEndpoints.CURRENT_USER_TOKEN) {
+            header(HttpHeaders.Authorization, "Bearer $accessToken")
+        }
+        return when (res.status) {
+            HttpStatusCode.BadRequest -> throw NetworkException.BadRequestException()
+            HttpStatusCode.OK -> res.body()
+            else -> {
+                e("NetworkError", res.status.toString())
+                throw NetworkException.UnknownException()
+            }
         }
     }
 
     suspend fun getUser(id: Long): User {
-        return client.get(ApiEndpoints.GET_USER) {
-            setBody(id)
-            contentType(ContentType.Text.Plain)
-        }.body()
+        return try {
+            client.get(ApiEndpoints.GET_USER + id.toString()).body()
+        } catch (e: NetworkException) {
+            throw mapKtorExceptionToNetworkException(e)
+        }
     }
 }
 

@@ -14,6 +14,7 @@ import com.proton.domain.useCase.GetProductPreviewsUseCase
 import com.proton.domain.useCase.GetUserUseCase
 import com.proton.domain.useCase.LoginUseCase
 import com.proton.domain.useCase.RegisterUseCase
+import com.proton.domain.util.NetworkConfigure
 import com.proton.home.HomeViewModel
 import com.proton.login.LoginViewModel
 import com.proton.network.di.networkModule
@@ -40,7 +41,8 @@ class SynapseApplication : Application() {
                 useCaseModule,
                 dataModule,
                 networkModule,
-                serviceModule
+                serviceModule,
+                domain
             )
         }
 
@@ -59,8 +61,7 @@ val viewModelModule = module {
     viewModel { ProfileViewModel(getUserUseCase = get(), id = it.get<Long>()) }
     viewModel {
         HomeViewModel(
-            getUserUseCase = get(), getProductPreviewsUseCase = get(),
-            id = it.get<Long>()
+            getProductPreviewsUseCase = get(),
         )
     }
 }
@@ -78,3 +79,6 @@ val serviceModule = module {
     factoryOf(::ProductServiceImpl) bind ProductService::class
 }
 
+val domain = module {
+    factory { NetworkConfigure(context = androidContext()) }
+}

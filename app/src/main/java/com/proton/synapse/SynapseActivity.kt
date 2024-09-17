@@ -20,7 +20,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.SynapseTheme
-import com.proton.domain.models.User
 import com.proton.synapse.navigation.Authentication
 import com.proton.synapse.navigation.Main
 import com.proton.synapse.navigation.SynapseNavigation
@@ -63,8 +62,7 @@ class SynapseActivity : ComponentActivity() {
                                 WindowInsets.safeDrawing.only(
                                     WindowInsetsSides.Horizontal,
                                 ),
-                            ), startDestination = startDestination, navController = navController,
-                        user = (authState as? AuthState.Authenticated)?.user ?: User()
+                            ), startDestination = startDestination, navController = navController
                     )
                 }
             }

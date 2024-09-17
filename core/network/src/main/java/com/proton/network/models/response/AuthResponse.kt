@@ -1,20 +1,21 @@
 package com.proton.network.models.response
 
+import android.annotation.SuppressLint
 import kotlinx.serialization.Serializable
 
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class AuthResponse(
-    val accessToken: String,
-    val refreshToken: String,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val age: Int,
-    val password: String,
-    val gender: String,
+    var userId: Long,
+    val firstName: String = "",
+    val lastName: String = "",
+    val email: String = "",
+    val gender: String = "",
     val dob: String = "",
-    var userName: String = firstName+lastName,
+    var userName: String = "",
     val number: Long = 0,
-    val cardId: List<Int> = listOf(),
-    val address: String = ""
+    val loginPassword: String = "",
+    var cartProducts: List<Long> = emptyList(),
+    var orderIds: List<Long> = emptyList(),
+    var wishListIds: List<Long> = emptyList()
 )

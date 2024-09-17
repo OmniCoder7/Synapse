@@ -15,19 +15,19 @@ class AuthRepositoryImpl(
 
     override fun refreshTokens(): AuthResponse {
         return AuthResponse(
-            accessToken = "",
-            refreshToken = "",
             firstName = "",
             lastName = "",
-            age = 0,
             email = "",
             gender = "",
             dob = "",
             userName = "",
             number = 0,
-            cardId = listOf(),
-            password = "",
-            address = ""
+            userId = 0,
+            loginPassword = "",
+            cartProducts = listOf(),
+            orderIds = listOf(),
+            wishListIds = listOf()
+
         )
     }
 
@@ -37,19 +37,19 @@ class AuthRepositoryImpl(
 
     override fun register(registerRequest: RegisterRequest): AuthResponse {
         return AuthResponse(
-            accessToken = "",
-            refreshToken = "",
             firstName = "",
             lastName = "",
-            age = 0,
             email = "",
             gender = "",
             dob = "",
             userName = "",
             number = 0,
-            cardId = listOf(),
-            password = "",
-            address = ""
+            userId = 0,
+            loginPassword = "",
+            cartProducts = listOf(),
+            orderIds = listOf(),
+            wishListIds = listOf()
+
         )
 
     }

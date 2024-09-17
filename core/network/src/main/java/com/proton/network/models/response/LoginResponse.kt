@@ -1,5 +1,6 @@
 package com.proton.network.models.response
 
+import android.annotation.SuppressLint
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -15,7 +15,6 @@ class LoginUseCase(
         password: String,
         coroutineScope: CoroutineScope
     ): Result<User, NetworkError.LoginError> {
-        delay(1_000)
         return authService.login(coroutineScope,email, password)
     }
 }

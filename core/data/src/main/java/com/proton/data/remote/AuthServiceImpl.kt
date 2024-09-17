@@ -4,13 +4,15 @@ import com.proton.domain.error.NetworkError
 import com.proton.domain.models.User
 import com.proton.domain.service.AuthService
 import com.proton.domain.util.Result
+import com.proton.domain.util.Result.*
 import com.proton.network.api.UserApi
 import com.proton.network.exception.NetworkException
 import com.proton.network.repositories.TokenManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import java.lang.NullPointerException
+import org.mindrot.jbcrypt.BCrypt
 
 class AuthServiceImpl(
     private val userApi: UserApi,
@@ -20,14 +22,12 @@ class AuthServiceImpl(
         coroutineScope: CoroutineScope,
         email: String,
         password: String,
-    ): Result<User, NetworkError.LoginError> {
-        return try {
-            val res = coroutineScope.async {
-                val res = userApi.login(email = email, password = password)
-                coroutineScope.launch { tokenManager.saveAccessToken(res.accessToken) }
-                coroutineScope.launch { tokenManager.saveRefreshToken(res.refreshToken) }
-                res
-            }.await()
+    ): Result<User, NetworkError.LoginError> = coroutineScope {
+        try {
+            val res = userApi.login(email = email, password = password)
+
+            launch { tokenManager.saveAccessToken(res.accessToken) }
+            launch { tokenManager.saveRefreshToken(res.refreshToken) }
 
             Result.Success(
                 User(
@@ -43,13 +43,13 @@ class AuthServiceImpl(
                 )
             )
         } catch (e: NetworkException) {
-            when (e) {
-                is NetworkException.BadRequestException -> Result.Error(NetworkError.LoginError.UNKNOWN) // this exception will never occur
-                is NetworkException.ConflictException -> Result.Error(NetworkError.LoginError.UNKNOWN) // this exception will never occur
-                is NetworkException.ConnectionException -> Result.Error(NetworkError.LoginError.CONNECTION)
-                is NetworkException.UnauthorizedException -> Result.Error(NetworkError.LoginError.UNAUTHORIZED)
-                is NetworkException.UnknownException -> Result.Error(NetworkError.LoginError.UNKNOWN) // this exception will never occur
-            }
+            Error(
+                when (e) {
+                    is NetworkException.ConnectionException -> NetworkError.LoginError.CONNECTION
+                    is NetworkException.UnauthorizedException -> NetworkError.LoginError.UNAUTHORIZED
+                    else -> NetworkError.LoginError.UNKNOWN
+                }
+            )
         }
     }
 
@@ -64,7 +64,7 @@ class AuthServiceImpl(
                     firstName = user.firstName,
                     lastName = user.lastName,
                     email = user.email,
-                    password = password,
+                    password = hashPassword(password),
                     gender = user.gender,
                     dob = user.dob,
                     userName = user.userName,
@@ -76,7 +76,7 @@ class AuthServiceImpl(
                 tokenManager.saveRefreshToken(res.refreshToken)
                 res
             }.await()
-            Result.Success(
+            Success(
                 User(
                     userId = res.userId,
                     firstName = res.firstName,
@@ -91,33 +91,38 @@ class AuthServiceImpl(
             )
         } catch (e: NetworkException) {
             when (e) {
-                is NetworkException.BadRequestException -> Result.Error(NetworkError.RegisterError.BAD_REQUEST)
-                is NetworkException.ConflictException -> Result.Error(NetworkError.RegisterError.CONFLICT)
-                is NetworkException.ConnectionException -> Result.Error(NetworkError.RegisterError.CONNECTION)
-                is NetworkException.UnauthorizedException -> Result.Error(NetworkError.RegisterError.UNKNOWN_ERROR)
-                is NetworkException.UnknownException -> Result.Error(NetworkError.RegisterError.UNKNOWN_ERROR)
+                is NetworkException.BadRequestException -> Error(NetworkError.RegisterError.BAD_REQUEST)
+                is NetworkException.ConflictException -> Error(NetworkError.RegisterError.CONFLICT)
+                is NetworkException.ConnectionException -> Error(NetworkError.RegisterError.CONNECTION)
+                else -> Error(NetworkError.RegisterError.UNKNOWN_ERROR)
             }
         }
     }
 
-    override suspend fun authenticate(coroutineScope: CoroutineScope): Result<User, NetworkError.AuthError> {
-        val res = coroutineScope.async {
-            val token = tokenManager.getAccessToken()
-                ?: throw NullPointerException()
-            userApi.authenticate(token)
-        }.await()
-        return Result.Success(
-            User(
-                firstName = res.firstName,
-                lastName = res.lastName,
-                email = res.email,
-                gender = res.gender,
-                dob = res.dob,
-                age = res.age,
-                userName = res.userName,
-                number = res.number,
-                cardId = res.cardId,
-            )
-        )
+    override suspend fun authenticate(coroutineScope: CoroutineScope): Result<User, NetworkError.AuthError> =
+        coroutineScope {
+            try {
+                val token = tokenManager.getAccessToken() ?: return@coroutineScope Result.Error(
+                    NetworkError.AuthError.UNKNOWN
+                )
+                val res = async { userApi.authenticate(token) }.await()
+                Success(
+                    User(
+                        firstName = res.firstName,
+                        lastName = res.lastName,
+                        email = res.email,
+                        gender = res.gender,
+                        dob = res.dob,
+                        userName = res.userName,
+                        number = res.number,
+                    )
+                )
+            } catch (_: NetworkException) {
+                Error(NetworkError.AuthError.UNKNOWN)
+            }
+        }
+
+    private fun hashPassword(password: String): String {
+        return BCrypt.hashpw(password, BCrypt.gensalt())
     }
 }

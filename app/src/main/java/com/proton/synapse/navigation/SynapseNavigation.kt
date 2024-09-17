@@ -6,7 +6,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
-import com.proton.domain.models.User
 import com.proton.home.Home
 import com.proton.home.home
 import com.proton.login.Login
@@ -18,8 +17,7 @@ import kotlinx.serialization.Serializable
 @Composable
 fun SynapseNavigation(
     modifier: Modifier = Modifier, startDestination: Any,
-    navController: NavHostController,
-    user: User
+    navController: NavHostController
 ) {
     NavHost(
         navController = navController,
@@ -27,8 +25,8 @@ fun SynapseNavigation(
         startDestination = startDestination
     ) {
         authNav(navController)
-        mainNav(navController,
-            user.userId)
+        mainNav(navController
+        )
     }
 }
 
@@ -53,12 +51,11 @@ fun NavGraphBuilder.authNav(
 
 fun NavGraphBuilder.mainNav(
     navController: NavHostController,
-    userId: Long,
 ) {
     navigation<Main>(
          startDestination = Home,
      ) {
-        home(userId)
+        home()
         profile()
     }
 }

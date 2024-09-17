@@ -1,9 +1,10 @@
 package com.proton.network.exception
 
 sealed class NetworkException : Exception() {
-    class ConnectionException(cause: Throwable?) : NetworkException()
+    class ConnectionException() : NetworkException()
     class UnauthorizedException : NetworkException()
-    class UnknownException(cause: Throwable?) : NetworkException()
-    class ConflictException(cause: Throwable?) : NetworkException()
-    class BadRequestException(cause: Throwable?) : NetworkException()
+    class UnknownException() : NetworkException()
+    class ConflictException() : NetworkException()
+    class BadRequestException() : NetworkException()
+    class NotFoundException() : NetworkException()
 }

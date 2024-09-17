@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Serializable
 object Home
@@ -18,10 +17,10 @@ fun NavHostController.home() {
     navigate(Home)
 }
 
-fun NavGraphBuilder.home(id: Long) {
+fun NavGraphBuilder.home() {
 
     composable<Home> {
-        val viewModel = koinViewModel<HomeViewModel> { parametersOf(id) }
+        val viewModel = koinViewModel<HomeViewModel>()
         val products by viewModel.products.collectAsStateWithLifecycle()
         HomeScreen(modifier = Modifier.fillMaxSize(),
             products = products,
