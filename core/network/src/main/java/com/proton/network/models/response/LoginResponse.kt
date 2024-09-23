@@ -3,10 +3,11 @@ package com.proton.network.models.response
 import android.annotation.SuppressLint
 import kotlinx.serialization.Serializable
 
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class LoginResponse(
-    val accessToken: String,
-    val refreshToken: String,
+    var accessToken: String="",
+    var refreshToken: String="",
     val userId: Long = 0,
     val firstName: String = "",
     val lastName: String = "",
@@ -15,5 +16,5 @@ data class LoginResponse(
     val dob: String = "",
     val age: Int = 0,
     var userName: String = "",
-    val number: Long = 0
+    val number: Long = 0,
 )

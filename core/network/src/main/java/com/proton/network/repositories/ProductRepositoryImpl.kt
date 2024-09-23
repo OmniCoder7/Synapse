@@ -14,9 +14,10 @@ class ProductRepositoryImpl(
         pageSize: Int,
         pageNo: Int,
         coroutineScope: CoroutineScope,
+        queryString: String
     ): List<ProductPreview> {
         val res =
-            coroutineScope.async { productApi.getProducts(pageSize = pageSize, pageNo = pageNo) }
+            coroutineScope.async { productApi.getProducts(pageSize = pageSize, pageNo = pageNo, query = queryString) }
         return res.getCompleted()
     }
 }

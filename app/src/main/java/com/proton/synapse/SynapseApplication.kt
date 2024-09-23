@@ -5,10 +5,8 @@ import coil.Coil
 import coil.ImageLoader
 import com.proton.data.di.dataModule
 import com.proton.data.remote.AuthServiceImpl
-import com.proton.data.remote.ProductServiceImpl
 import com.proton.data.remote.UserServiceImpl
 import com.proton.domain.service.AuthService
-import com.proton.domain.service.ProductService
 import com.proton.domain.service.UserService
 import com.proton.domain.useCase.GetProductPreviewsUseCase
 import com.proton.domain.useCase.GetUserUseCase
@@ -22,6 +20,8 @@ import com.proton.profile.ProfileViewModel
 import com.proton.register.RegisterViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.core.Koin
+import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
@@ -52,17 +52,20 @@ class SynapseApplication : Application() {
                 .build()
         )
     }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        // close the ktor client and koin
+    }
 }
 
 val viewModelModule = module {
     viewModelOf(::LoginViewModel)
     viewModelOf(::SynapseViewModel)
     viewModelOf(::RegisterViewModel)
-    viewModel { ProfileViewModel(getUserUseCase = get(), id = it.get<Long>()) }
+    viewModel { ProfileViewModel(getUserUseCase = get(), id = it.get<Long>(), productService = get()) }
     viewModel {
-        HomeViewModel(
-            getProductPreviewsUseCase = get(),
-        )
+        HomeViewModel(get(), get())
     }
 }
 
@@ -76,7 +79,6 @@ val useCaseModule = module {
 val serviceModule = module {
     factoryOf(::AuthServiceImpl) bind AuthService::class
     factoryOf(::UserServiceImpl) bind UserService::class
-    factoryOf(::ProductServiceImpl) bind ProductService::class
 }
 
 val domain = module {

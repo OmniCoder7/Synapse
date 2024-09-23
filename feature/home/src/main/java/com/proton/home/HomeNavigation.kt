@@ -21,9 +21,7 @@ fun NavGraphBuilder.home() {
 
     composable<Home> {
         val viewModel = koinViewModel<HomeViewModel>()
-        val products by viewModel.products.collectAsStateWithLifecycle()
         HomeScreen(modifier = Modifier.fillMaxSize(),
-            products = products,
             addToCart = { viewModel.addToCart(it) },
             addToWishList = {viewModel.addToWishList(it)})
     }

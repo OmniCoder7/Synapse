@@ -94,7 +94,10 @@ class AuthServiceImpl(
                 is NetworkException.BadRequestException -> Error(NetworkError.RegisterError.BAD_REQUEST)
                 is NetworkException.ConflictException -> Error(NetworkError.RegisterError.CONFLICT)
                 is NetworkException.ConnectionException -> Error(NetworkError.RegisterError.CONNECTION)
-                else -> Error(NetworkError.RegisterError.UNKNOWN_ERROR)
+                else -> {
+                    e.printStackTrace()
+                    Error(NetworkError.RegisterError.UNKNOWN_ERROR)
+                }
             }
         }
     }
@@ -102,10 +105,13 @@ class AuthServiceImpl(
     override suspend fun authenticate(coroutineScope: CoroutineScope): Result<User, NetworkError.AuthError> =
         coroutineScope {
             try {
-                val token = tokenManager.getAccessToken() ?: return@coroutineScope Result.Error(
+                val accessToken = tokenManager.getAccessToken() ?: return@coroutineScope Result.Error(
                     NetworkError.AuthError.UNKNOWN
                 )
-                val res = async { userApi.authenticate(token) }.await()
+                val refreshToken = tokenManager.getRefreshToken() ?: return@coroutineScope Result.Error(
+                    NetworkError.AuthError.UNKNOWN
+                )
+                val res = async { userApi.authenticate(accessToken, refreshToken) }.await()
                 Success(
                     User(
                         firstName = res.firstName,

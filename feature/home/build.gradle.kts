@@ -14,4 +14,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(project(":core:domain"))
+
+    implementation("androidx.paging:paging-compose:3.3.2")
+    implementation("androidx.paging:paging-runtime:3.3.2")
 }

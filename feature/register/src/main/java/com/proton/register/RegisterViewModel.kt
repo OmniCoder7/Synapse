@@ -55,25 +55,23 @@ class RegisterViewModel(
                 gender = _uiState.value.gender,
                 dob = convertMillisToDate(_uiState.value.dob)
             )
-            when (val res = registerUseCase(
-                user = User(
-                    firstName = "viskin",
-                    lastName = "saka",
-                    email = "viskinSaka@gmail.com"
-                ), coroutineScope = viewModelScope, password = "#100Viskin"
-            )) {
+            when (val res = registerUseCase(user = user, coroutineScope = viewModelScope, password = _password.value.text)) {
                 is Result.Error -> when (res.error) {
-                    NetworkError.RegisterError.UNKNOWN_ERROR -> _registerError.value =
+                    NetworkError.RegisterError.UNKNOWN_ERROR -> _registerError.update {
                         UIText.StringResource(R.string.unknown_error)
+                    }
 
-                    NetworkError.RegisterError.BAD_REQUEST -> _registerError.value =
+                    NetworkError.RegisterError.BAD_REQUEST -> _registerError.update {
                         UIText.StringResource(R.string.bad_request)
+                    }
 
-                    NetworkError.RegisterError.CONNECTION -> _registerError.value =
+                    NetworkError.RegisterError.CONNECTION -> _registerError.update {
                         UIText.StringResource(R.string.connection_error)
+                    }
 
-                    NetworkError.RegisterError.CONFLICT -> _registerError.value =
+                    NetworkError.RegisterError.CONFLICT -> _registerError.update {
                         UIText.StringResource(R.string.conflict_error)
+                    }
                 }
 
                 is Result.Success -> onSuccess.invoke(res.data.userId)

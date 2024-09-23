@@ -4,6 +4,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proton.domain.models.User
+import com.proton.domain.service.ProductService
 import com.proton.domain.useCase.GetUserUseCase
 import com.proton.profile.ui.composable.AddressType
 import com.proton.profile.ui.state.DialogState
@@ -15,17 +16,24 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val getUserUseCase: GetUserUseCase,
+    private val productService: ProductService,
     id: Long,
 ) : ViewModel() {
 
     private val _user = MutableStateFlow(User())
-    private val user: StateFlow<User> = _user.asStateFlow()
+    private val user: StateFlow<User> = _user.onStart { loadUser(id) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            User()
+        )
 
     val userState: StateFlow<ProfileUiState> = _user
         .map { ProfileUiState.Success(it) }
@@ -51,10 +59,6 @@ class ProfileViewModel(
             emptyList()
         )
 
-    init {
-        loadUser(id)
-    }
-
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.Hidden)
     val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
 
@@ -67,6 +71,7 @@ class ProfileViewModel(
                 onSave = { _user.update { user: User -> user.copy(firstName = it) } },
                 keyboardType = KeyboardType.Text
             )
+
             ProfileItemType.Username -> DialogState.TextEdit(
                 type = item.type,
                 title = "Username",
@@ -74,6 +79,7 @@ class ProfileViewModel(
                 onSave = { _user.update { user: User -> user.copy(userName = it) } },
                 keyboardType = KeyboardType.Text
             )
+
             ProfileItemType.EmailAddress -> DialogState.TextEdit(
                 type = item.type,
                 title = "Email Address",
@@ -81,6 +87,7 @@ class ProfileViewModel(
                 onSave = { _user.update { user: User -> user.copy(email = it) } },
                 keyboardType = KeyboardType.Email
             )
+
             ProfileItemType.PhoneNumber -> DialogState.TextEdit(
                 type = item.type,
                 title = "Phone Number",
@@ -123,21 +130,21 @@ class ProfileViewModel(
             iconId = R.drawable.name,
             title = "Name",
             subTitle = "${user.firstName} ${user.lastName}",
-            onEditSave = { updateUserField {  user: User-> user.copy(firstName = it) } }
+            onEditSave = { updateUserField { user: User -> user.copy(firstName = it) } }
         ),
         ProfileItemData(
             type = ProfileItemType.Username,
             iconId = R.drawable.username,
             title = "Username",
             subTitle = user.userName,
-            onEditSave = { updateUserField {  user: User-> user.copy(userName = it) } }
+            onEditSave = { updateUserField { user: User -> user.copy(userName = it) } }
         ),
         ProfileItemData(
             type = ProfileItemType.Gender,
             iconId = R.drawable.gender,
             title = "Gender",
             subTitle = user.gender,
-            onEditSave = { updateUserField {  user: User-> user.copy(gender = it) } }
+            onEditSave = { updateUserField { user: User -> user.copy(gender = it) } }
         ),
         ProfileItemData(
             type = ProfileItemType.PhoneNumber,
@@ -168,13 +175,13 @@ class ProfileViewModel(
                 type = ProfileItemType.Security,
                 iconId = R.drawable.security,
                 title = "Security",
-                onEditSave = { updateUserField {  user: User-> user.copy(firstName = it) } }
+                onEditSave = { updateUserField { user: User -> user.copy(firstName = it) } }
             ),
             ProfileItemData(
                 type = ProfileItemType.Privacy,
                 iconId = R.drawable.privacy,
                 title = "Privacy",
-                onEditSave = { updateUserField {  user: User-> user.copy(userName = it) } }
+                onEditSave = { updateUserField { user: User -> user.copy(userName = it) } }
             ),
             ProfileItemData(
                 type = ProfileItemType.NotificationPreferences,

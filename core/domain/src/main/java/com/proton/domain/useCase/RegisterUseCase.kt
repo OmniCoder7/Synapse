@@ -1,5 +1,6 @@
 package com.proton.domain.useCase
 
+import android.util.Log
 import com.proton.domain.error.NetworkError
 import com.proton.domain.models.User
 import com.proton.domain.service.AuthService

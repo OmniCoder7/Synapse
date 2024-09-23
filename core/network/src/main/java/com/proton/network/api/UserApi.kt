@@ -29,7 +29,17 @@ class UserApi(private val client: HttpClient) {
         }
         return when (res.status) {
             HttpStatusCode.Unauthorized -> throw NetworkException.UnauthorizedException()
-            HttpStatusCode.OK -> res.body()
+            HttpStatusCode.OK -> {
+                val response = res.body<LoginResponse>()
+                res.headers[HttpHeaders.Authorization]?.let {
+                    response.accessToken = it
+                }
+                res.headers["X-Refresh-Token"]?.let {
+                    response.refreshToken = it
+                }
+                response
+            }
+
             else -> {
                 e("NetworkError", res.status.toString())
                 throw NetworkException.UnknownException()
@@ -67,8 +77,21 @@ class UserApi(private val client: HttpClient) {
         return when (res.status) {
             HttpStatusCode.BadRequest -> throw NetworkException.BadRequestException()
             HttpStatusCode.NotFound -> throw NetworkException.NotFoundException()
-            HttpStatusCode.Unauthorized -> throw NetworkException.UnauthorizedException()
-            HttpStatusCode.OK -> res.body()
+            HttpStatusCode.Unauthorized -> {
+                Log.d("dfkl;dsk", "register:"+ res.body())
+                throw NetworkException.UnauthorizedException()
+            }
+            HttpStatusCode.OK -> {
+                val response = res.body<LoginResponse>()
+                res.headers[HttpHeaders.Authorization]?.let {
+                    response.accessToken = it
+                }
+                res.headers["X-Refresh-Token"]?.let {
+                    response.refreshToken = it
+                }
+                response
+            }
+
             else -> {
                 e("NetworkError", res.status.toString())
                 throw NetworkException.UnknownException()
@@ -76,13 +99,23 @@ class UserApi(private val client: HttpClient) {
         }
     }
 
-    suspend fun authenticate(accessToken: String): AuthResponse {
+    suspend fun authenticate(accessToken: String, refreshToken: String): AuthResponse {
         val res = client.get(ApiEndpoints.CURRENT_USER_TOKEN) {
             header(HttpHeaders.Authorization, "Bearer $accessToken")
+            header("X-Refresh-Token", refreshToken)
         }
         return when (res.status) {
             HttpStatusCode.BadRequest -> throw NetworkException.BadRequestException()
-            HttpStatusCode.OK -> res.body()
+            HttpStatusCode.OK -> {
+                val response = res.body<AuthResponse>()
+                res.headers[HttpHeaders.Authorization]?.let {
+                    response.accessToken = it
+                }
+                res.headers["X-Refresh-Token"]?.let {
+                    response.refreshToken = it
+                }
+                response
+            }
             else -> {
                 e("NetworkError", res.status.toString())
                 throw NetworkException.UnknownException()

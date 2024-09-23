@@ -1,22 +1,23 @@
 package com.proton.network.client
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.gson.gson
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-fun createHttpClient(): HttpClient {
-    val client = HttpClient(Android) {
-        install(Logging)
-        install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
-        }
+fun create(): HttpClient = HttpClient(Android) {
+
+    install(Logging) {
     }
-    return client
+
+    install(ContentNegotiation) { gson() }
+
+    defaultRequest {
+        url("http://172.17.5.123")
+        port = 8080
+    }
 }

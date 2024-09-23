@@ -1,8 +1,8 @@
 package com.proton.network.di
 
-import com.proton.network.api.UserApi
 import com.proton.network.api.ProductApi
-import com.proton.network.client.createHttpClient
+import com.proton.network.api.UserApi
+import com.proton.network.client.create
 import com.proton.network.repositories.AuthRepository
 import com.proton.network.repositories.AuthRepositoryImpl
 import com.proton.network.repositories.ProductRepository
@@ -12,7 +12,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val networkModule = module {
-    single { createHttpClient() }
+    single { create() }
     singleOf(::UserApi)
     singleOf(::ProductApi)
     singleOf(::AuthRepositoryImpl) bind AuthRepository::class

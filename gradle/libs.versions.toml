@@ -1,11 +1,11 @@
 [versions]
-activityCompose = "1.9.1"
-agp = "8.8.0-alpha02"
+activityCompose = "1.9.2"
+agp = "8.6.1"
 androidGradlePlugin = "8.4.2"
-androidDesugarJdkLibs = "2.0.4"
-androidTools = "31.5.1"
-androidxComposeBom = "2024.06.00"
-androidxLifecycle = "2.8.4"
+androidDesugarJdkLibs = "2.1.2"
+androidTools = "31.6.1"
+androidxComposeBom = "2024.09.02"
+androidxLifecycle = "2.8.6"
 appcompat = "1.7.0"
 coil = "2.7.0"
 composeMaterial = "1.6.8"
@@ -17,17 +17,19 @@ espressoCore = "3.6.1"
 jbcrypt = "0.4"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-kotlinxCoroutinesAndroid = "1.8.1"
-lifecycleRuntimeKtx = "2.8.4"
+kotlinxCoroutinesAndroid = "1.9.0"
+lifecycleRuntimeKtx = "2.8.6"
 material = "1.12.0"
-navigationCompose = "2.8.0-rc01"
+navigationCompose = "2.8.1"
 koinBom = "4.0.0-RC1"
 ksp = "2.0.0-1.0.22"
 kotlin = "2.0.0"
-kotlinxSerializationJson = "1.7.1"
-ktor = "3.0.0-beta-2"
+kotlinxSerializationJson = "1.7.2"
+ktor = "3.0.0-rc-1"
+pagingCompose = "3.3.2"
 room = "2.6.1"
-uiTextGoogleFonts = "1.6.8"
+roomPaging = "2.6.1"
+uiTextGoogleFonts = "1.7.2"
 metricsPerformance = "1.0.0-beta01"
 
 [libraries]
@@ -35,6 +37,9 @@ android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomPaging" }
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -91,6 +96,7 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth"}
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation"}
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging"}
+ktor-client-gson = { group = "io.ktor", name = "ktor-serialization-gson"}
 ktor-client-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor"}
 
 # material

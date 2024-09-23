@@ -33,14 +33,18 @@ class SynapseActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SynapseTheme {
+                val viewModel: SynapseViewModel = koinViewModel()
+                val authState by viewModel.authState.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
+
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = { SynapseTopAppBar(navController = navController) },
-                    bottomBar = { SynapseBottomAppBar(navController = navController) }
+                    bottomBar = {
+                        if (authState is AuthState.Authenticated)
+                            SynapseBottomAppBar(navController = navController)
+                    }
                 ) { innerPadding ->
 
-                    val viewModel: SynapseViewModel = koinViewModel()
-                    val authState by viewModel.authState.collectAsStateWithLifecycle()
                     installSplashScreen().setKeepOnScreenCondition {
                         when (authState) {
                             is AuthState.Loading -> true

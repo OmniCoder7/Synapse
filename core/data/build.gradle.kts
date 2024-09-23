@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.synapse.android.library)
     alias(libs.plugins.synapse.android.koin)
@@ -17,5 +15,8 @@ dependencies {
 
     implementation(project(":core:network"))
     implementation(project(":core:domain"))
-    implementation (libs.jbcrypt)
+    implementation(libs.jbcrypt)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.room.paging)
 }

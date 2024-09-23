@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -42,23 +41,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.proton.domain.error.NetworkError
-import com.proton.domain.models.User
-import com.proton.domain.service.AuthService
-import com.proton.domain.useCase.RegisterUseCase
-import com.proton.domain.util.Result
 import com.proton.register.composable.Email
 import com.proton.register.composable.NoTintIcon
 import com.proton.register.composable.Password
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.KoinApplication
-import org.koin.core.module.dsl.viewModelOf
-import org.koin.dsl.module
 
 @Composable
 fun RegisterScreen(modifier: Modifier = Modifier, toLogin: () -> Unit, toHome: (Long) -> Unit) {
@@ -93,7 +82,8 @@ fun RegisterScreen(modifier: Modifier = Modifier, toLogin: () -> Unit, toHome: (
                 fontWeight = FontWeight.Bold,
                 color = colorResource(R.color.register_title)
             )
-            TextField(value = uiState.firstName,
+            TextField(
+                value = uiState.firstName,
                 onValueChange = { viewModel.setFirstName(it) },
                 label = { Text(stringResource(R.string.enter_first_name)) },
                 colors = TextFieldDefaults.colors(
@@ -120,7 +110,8 @@ fun RegisterScreen(modifier: Modifier = Modifier, toLogin: () -> Unit, toHome: (
                 leadingIcon = { NoTintIcon(id = R.drawable.last_name) }
 
             )
-            TextField(value = uiState.userName,
+            TextField(
+                value = uiState.userName,
                 onValueChange = { viewModel.setUsername(it) },
                 label = { Text(stringResource(R.string.enter_username)) },
                 colors = TextFieldDefaults.colors(
@@ -201,9 +192,8 @@ fun RegisterScreen(modifier: Modifier = Modifier, toLogin: () -> Unit, toHome: (
                     fontWeight = FontWeight.W400
                 )
             }
-
             registerError?.let {
-                Text(text = it.asString(), color = Color.Red)
+                // TODO: Show error in textField
             }
         }
     }
